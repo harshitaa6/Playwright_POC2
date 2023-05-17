@@ -1,14 +1,25 @@
 import { test, expect } from "@playwright/test";
+import { waitForSelector } from "./example.spec";
+import { goto } from "./example.spec";
+
+require("dotenv").config();
 
 test("test", async ({ page }) => {
-  await page.goto("https://www.amazon.com/");
-  await page.waitForSelector("#twotabsearchtextbox");
-  await page.click("#twotabsearchtextbox");
+  await goto(page, process.env.WEBURL);
+
   await page.pause();
-  await page.waitForSelector("id=twotabsearchtextbox");
-  await page.locator("id=twotabsearchtextbox").fill("samsung mobile");
-  await page.waitForSelector("#nav-search-submit-button");
-  await page.click("#nav-search-submit-button");
-  await page.waitForSelector(".s-result-item:nth-child(5) h2 a ");
-  await page.click(".s-result-item:nth-child(5) h2 a ");
+  // await page.waitForSelector(process.env.SEARCH_TEXTBOX_ID);
+  await waitForSelector(page, process.env.SEARCH_TEXTBOX_ID);
+
+  await page
+    .locator(process.env.SEARCH_TEXTBOX_ID)
+    .fill(process.env.SEARCH_PRODUCT_NAME);
+  await waitForSelector(page, process.env.SUBMIT_BUTTON_ID);
+
+  await page.click(process.env.SUBMIT_BUTTON_ID);
+  await page.evaluate(() => {
+    window.scrollTo(0, 1000);
+  });
+  // await waitForSelector(page, process.env.SELECT_PRODUCT_ID);
+  await page.click(process.env.SELECT_PRODUCT_ID);
 });
